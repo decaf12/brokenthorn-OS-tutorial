@@ -17,6 +17,13 @@ bits 16
 ; cli: clear all interrupts
 ; hlt: halt the system
 Start:
+; 0x10 is the interrupt for printing a to the screen
+; parameters:
+;   mode: stored in ah. Here we use 0x0e, which means tele-type mode
+;   ASCII code: stored in al.
+; 
+; To print a whole string of characters, we leave ah at 0x0e, and repeatedly
+; change al and call int 0x10.
     mov ah, 0x0e
     mov al, 'd'
     int 0x10
