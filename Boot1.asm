@@ -17,6 +17,21 @@ bits 16
 ; cli: clear all interrupts
 ; hlt: halt the system
 Start:
+    mov ah, 0x0e
+    mov al, 'd'
+    int 0x10
+    mov al, 'e'
+    int 0x10
+    mov al, 'c'
+    int 0x10
+    mov al, 'a'
+    int 0x10
+    mov al, 'f'
+    int 0x10
+    mov al, 'O'
+    int 0x10
+    mov al, 'S'
+    int 0x10
     cli
     hlt
 
