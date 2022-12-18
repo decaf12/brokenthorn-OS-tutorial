@@ -25,13 +25,10 @@ Start:
 ; $ - $$: the number of bytes from the current line to the start (aka size of the program)
 ; 
 ; The goal here is to zero-fill all unused bytes of the sector (512 bytes).
-; Think of these zeros as leading zeros. On the boot sector we have:
-; 1) a bunch of leading zeros
-; 2) The program itself
-; 3) the magic number that identifies the sector as a boot sector.
-; 
-; The number of leading zeros is 512 minus:
-;   1) the size of the magic number: 2 bytes
-;   2) the size of the program: $ - $$
+; On the boot sector we have:
+; 1) The program itself
+; 2) A bunch of padding zeros up to the 510th byte, leaving the last two bytes for:
+; 3) The magic number that identifies the sector as a boot sector.
+
 times 510 - ($ - $$) db 0
 dw 0xAA55
