@@ -4,33 +4,47 @@
 ;
 ;	Operating Systems Development Tutorial
 ;*********************************************
-
-; 0x10 is the interrupt for printing a to the screen
-; parameters:
-;   mode: stored in ah. Here we use 0x0e, which means tele-type mode
-;   ASCII code: stored in al.
-; 
-; To print a whole string of characters, we leave ah at 0x0e, and repeatedly
-; change al and call int 0x10.
 mov ah, 0x0e
-mov al, 'd'
-int 0x10
-mov al, 'e'
-int 0x10
-mov al, 'c'
-int 0x10
-mov al, 'a'
-int 0x10
-mov al, 'f'
-int 0x10
-mov al, 'O'
-int 0x10
-mov al, 'S'
+mov bp, 0x8000
+mov sp, bp
+
+push 'A'
+push 'B'
+push 'C'
+
+; Pop the stack and save the popped character in al
+; We would *like* to just do "pop al", but we can't.
+; 
+; Remember we are in 16-bit mode so we can only pop
+; 16 bits at a time, and al is an 8-bit register.
+; 
+; So we must pop into a 16-bit register such as ax, bx, etc.
+; But we can't directly pop into ax either, as that risks overwriting
+; ah, which should keep holding 0x0e.
+; 
+; So pop into another 16-bit register (randomly choose bx here),
+; then move its lower byte to al.
+
+pop bx
+mov al, bl
 int 0x10
 
-; Jump to the current address, aka an infinite loop
+pop bx
+mov al, bl
+int 0x10
+
+; For the sake of exercise, try directly referencing the address of the
+; last character.
+
+; Where is the last character?
+; Recall we set the stack base to be 0x8000
+; The 'A' is represented as two bytes in 16-bit mode:
+;   1) zero padding at 0x7fff
+;   2) The actual character 'A' at 0x7ffe
+; We want to put the actual charater into al.
+mov al, [0x7ffe]
+int 0x10
 jmp $
-
 ; $: address of the current line
 ; $$: address of the first instruction. We set this at 0x7c00.
 ; $ - $$: the number of bytes from the current line to the start (aka size of the program)
