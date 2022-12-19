@@ -1,43 +1,21 @@
-;*********************************************
-;	Boot1.asm
-;		- A Simple Bootloader
 ;
-;	Operating Systems Development Tutorial
-;*********************************************
-mov ah, 0x0e
-mov bx, 40
+; A boot sector that prints a string using our function.
+;
+org 0x7c00 ; Tell the assembler where this code will be loaded
+mov bx, HELLO_MSG ; Use BX as a parameter to our function , so
+call print_string ; we can specify the address of a string.
+mov bx, GOODBYE_MSG
+call print_string
+jmp $ ; Hang
 
-cmp bx, 4
-jle print_A
-jg check_B
+%include "print_string.asm"
+; Data
+HELLO_MSG:
+    db 'Hello, World!', 0 ; <-- The zero on the end tells our routine
+                          ; when to stop printing characters.
+GOODBYE_MSG:
+    db 'Goodbye!', 0
 
-print:
-int 0x10
-jmp $
-
-print_A:
-    mov al, 'A'
-    jmp print
-
-check_B:
-    cmp bx, 40
-    jl print_B
-    jge print_C
-print_B:
-    mov al, 'B'
-    jmp print
-print_C:
-    mov al, 'C'
-    jmp print
-; $: address of the current line
-; $$: address of the first instruction. We set this at 0x7c00.
-; $ - $$: the number of bytes from the current line to the start (aka size of the program)
-; 
-; The goal here is to zero-fill all unused bytes of the sector (512 bytes).
-; On the boot sector we have:
-; 1) The program itself
-; 2) A bunch of padding zeros up to the 510th byte, leaving the last two bytes for:
-; 3) The magic number that identifies the sector as a boot sector.
-
-times 510 - ($ - $$) db 0
-dw 0xAA55
+; Padding and magic number.
+times 510-($-$$) db 0
+dw 0xaa55
