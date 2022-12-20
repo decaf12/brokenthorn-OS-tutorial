@@ -20,13 +20,12 @@ print_hex:
         cmp bx, HEX_OUT + 1
         je post_modification
 
-        mov cx, dx
-        and cl, byte 0x0f
-        cmp cl, byte 10
+        mov [bx], dl
+        and [bx], byte 0xf
+        cmp [bx], byte 10
         jl put_numeric
         jge put_letter
         return_to_loop:
-            mov [bx], cl     
             shr dx, 4
             dec bx
             jmp loop
@@ -34,14 +33,13 @@ print_hex:
     ret
 
 put_numeric:
-    add cl, byte '0'
+    add [bx], byte '0'
     jmp return_to_loop
 put_letter:
-    add cl, byte 'a' - 10
+    add [bx], byte 'a' - 10
     jmp return_to_loop
 
 post_modification:
-    ; TODO : manipulate chars at HEX_OUT to reflect DX
     mov bx, HEX_OUT ; print the string pointed to
     call print_string ; by BX
     popa
