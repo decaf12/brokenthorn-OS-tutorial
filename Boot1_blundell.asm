@@ -6,7 +6,15 @@ mov bx, HELLO_MSG ; Use BX as a parameter to our function , so
 call print_string ; we can specify the address of a string.
 mov bx, GOODBYE_MSG
 call print_string
+
+mov dx, 0x2fb6 ; store the value to print in dx
+call print_hex 
+; call the function
 jmp $ ; Hang
+
+; prints the value of DX as hex.
+
+; global variables
 
 %include "print_string.asm"
 ; Data
