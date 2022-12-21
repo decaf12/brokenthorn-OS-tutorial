@@ -1,29 +1,22 @@
 ;
 ; A boot sector that prints a string using our function.
 ;
-org 0x7c00 ; Tell the assembler where this code will be loaded
-mov bx, HELLO_MSG ; Use BX as a parameter to our function , so
-call print_string ; we can specify the address of a string.
-mov bx, GOODBYE_MSG
-call print_string
-
-mov dx, 0x2fb6 ; store the value to print in dx
-call print_hex 
-; call the function
-jmp $ ; Hang
-
-; prints the value of DX as hex.
-
-; global variables
-
-%include "print_string.asm"
-; Data
-HELLO_MSG:
-    db 'Hello, World!', 0 ; <-- The zero on the end tells our routine
-                          ; when to stop printing characters.
-GOODBYE_MSG:
-    db 'Goodbye!', 0
-
-; Padding and magic number.
+mov ah , 0x0e ; int 10/ ah = 0eh -> scrolling teletype BIOS routine
+mov al , [the_secret]
+int 0x10 ; Does this print an X?
+mov bx, 0x7c0 ; Can 't set ds directly , so set bx
+mov ds, bx ; then copy bx to ds.
+mov al, [the_secret]
+int 0x10 ; Does this print an X?
+mov al, [es:the_secret] ; Tell the CPU to use the es ( not ds) segment.
+int 0x10 ; Does this print an X?
+mov bx, 0x7c0
+mov es, bx
+mov al, [es:the_secret]
+int 0x10 ; Does this print an X?
+jmp $ ; Jump forever.
+the_secret:
+    db "X"
+; Padding and magic BIOS number.
 times 510-($-$$) db 0
 dw 0xaa55
