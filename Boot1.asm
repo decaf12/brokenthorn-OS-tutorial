@@ -71,7 +71,56 @@ loader:
 
 	cli			; Clear all Interrupts
 	hlt			; halt the system
-	
+
+
+LOAD_ROOT:
+     
+     ; compute size of root directory and store in "cx"
+     
+          xor     cx, cx
+          xor     dx, dx
+          mov     ax, 0x0020                      ; 32 byte directory entry
+          mul     WORD [bpbRootEntries]           ; total size of directory
+          div     WORD [bpbBytesPerSector]        ; sectors used by directory
+          xchg    ax, cx
+          
+     ; compute location of root directory and store in "ax"
+     
+          mov     al, BYTE [bpbNumberOfFATs]       ; number of FATs
+          mul     WORD [bpbSectorsPerFAT]          ; sectors used by FATs
+          add     ax, WORD [bpbReservedSectors]    ; adjust for bootsector
+          mov     WORD [datasector], ax            ; base of root directory
+          add     WORD [datasector], cx
+          
+     ; read root directory into memory (7C00:0200)
+     
+          mov     bx, 0x0200                        ; copy root dir above bootcode
+          call    ReadSectors
+
+LOAD_FAT:
+     
+     ; save starting cluster of boot image
+     
+          mov     si, msgCRLF
+          call    Print
+          mov     dx, WORD [di + 0x001A]
+          mov     WORD [cluster], dx                  ; file's first cluster
+          
+     ; compute size of FAT and store in "cx"
+     
+          xor     ax, ax
+          mov     al, BYTE [bpbNumberOfFATs]                ; number of FATs
+          mul     WORD [bpbSectorsPerFAT]                ; sectors used by FATs
+          mov     cx, ax
+ 
+     ; compute location of FAT and store in "ax"
+ 
+          mov     ax, WORD [bpbReservedSectors]          ; adjust for bootsector
+          
+     ; read FAT into memory (7C00:0200)
+ 
+          mov     bx, 0x0200                          ; copy FAT above bootcode
+          call    ReadSectors
 times 510 - ($-$$) db 0		; We have to be 512 bytes. Clear the rest of the bytes with 0
 
 dw 0xAA55			; Boot Signiture
