@@ -224,7 +224,7 @@ main:
           mov     WORD [cluster], dx                  ; file's first cluster
           
      ; compute size of FAT and store in "cx"
-     
+          
           xor     ax, ax
           mov     al, BYTE [bpbNumberOfFATs]          ; number of FATs
           mul     WORD [bpbSectorsPerFAT]             ; sectors used by FATs
@@ -277,7 +277,7 @@ main:
           
      .EVEN_CLUSTER:
      
-          and     dx, 0000111111111111b               ; take low twelve bits
+          and     dx, 0x0FFF               ; take low twelve bits
          jmp     .DONE
          
      .ODD_CLUSTER:

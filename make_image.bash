@@ -1,1 +1,0 @@
-dd if=./boot1.bin of=boot1.img bs=512 count=1
