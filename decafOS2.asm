@@ -5,8 +5,8 @@ start:
 
 %include "print_string_redo.asm"
 main:
-    mov ax, cs
-    mov ds, ax
+    push cs
+    pop ds
 
     mov si, msg
     call print_string
@@ -14,7 +14,4 @@ main:
     cli
     hlt
 
-msg: db "decafOS stage 2"
-times 510 - ($ - $$) db 0
-
-dw 0xaa55
+msg: db "decafOS stage 2", 0x0d, 0x0a, 0

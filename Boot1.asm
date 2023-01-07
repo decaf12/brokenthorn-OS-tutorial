@@ -85,7 +85,7 @@ ReadSectors:
           jnz     .SECTORLOOP                         ; attempt to read again
           int     0x18
      .SUCCESS
-          mov     si, msgProgress
+          mov     si, loadingStage2Msg
           call    Print
           pop     cx
           pop     bx
@@ -200,9 +200,9 @@ main:
      .LOOP:
           push    cx
           mov     cx, 0x000B                            ; eleven character name
-          mov     si, ImageName                         ; image name to find
+          mov     si, stage2Name                         ; image name to find
           push    di
-     rep  cmpsb                                         ; test for entry match
+          rep cmpsb                                         ; test for entry match
           pop     di
           je      LOAD_FAT
           pop     cx
@@ -218,7 +218,7 @@ main:
      
      ; save starting cluster of boot image
      
-          mov     si, msgCRLF
+          mov     si, blankLine
           call    Print
           mov     dx, WORD [di + 0x001A]
           mov     WORD [cluster], dx                  ; file's first cluster
@@ -241,7 +241,7 @@ main:
 
      ; read image file into memory (0050:0000)
      
-          mov     si, msgCRLF
+          mov     si, blankLine
           call    Print
           mov     ax, 0x0050
           mov     es, ax                              ; destination for image
@@ -292,7 +292,7 @@ main:
           
      DONE:
      
-          mov     si, msgCRLF
+          mov     si, blankLine
           call    Print
           push    WORD 0x0050
           push    WORD 0x0000
@@ -300,7 +300,7 @@ main:
           
      FAILURE:
      
-          mov     si, msgFailure
+          mov     si, stage2NotFoundMsg
           call    Print
           mov     ah, 0x00
           int     0x16                                ; await keypress
@@ -312,11 +312,11 @@ main:
      
      datasector  dw 0x0000
      cluster     dw 0x0000
-     ImageName   db "STAGE2  SYS"
+     stage2Name   db "STAGE2  SYS"
      msgLoading  db 0x0D, 0x0A, "Loading Boot Image ", 0x0D, 0x0A, 0x00
-     msgCRLF     db 0x0D, 0x0A, 0x00
-     msgProgress db ".", 0x00
-     msgFailure  db 0x0D, 0x0A, "ERROR : Press Any Key to Reboot", 0x0A, 0x00
+     blankLine     db 0x0D, 0x0A, 0x00
+     loadingStage2Msg db ".", 0x00
+     stage2NotFoundMsg  db 0x0D, 0x0A, "ERROR : Press Any Key to Reboot", 0x0A, 0x00
      
           TIMES 510-($-$$) DB 0
           DW 0xAA55
