@@ -1,0 +1,2 @@
+floppya: 1_44 = stage1.img, status = inserted
+boot: a
