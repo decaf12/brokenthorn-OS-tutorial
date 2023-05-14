@@ -1,10 +1,9 @@
 ReadSectors:
     main_loop:
         mov di, 5
-    
+
     sector_loop:
         push ax
-        push bx
         push cx
 
         call LBACHS
@@ -21,16 +20,14 @@ ReadSectors:
         int 0x13
         dec di
         pop cx
-        pop bx
         pop ax
         jnz sector_loop
         int 0x18
-    
+
     sector_successfully_read:
         mov si, sectorReadSuccessMsg
         call print_string
         pop cx
-        pop bx
         pop ax
         add bx, word [bpbBytesPerSector]
         inc ax

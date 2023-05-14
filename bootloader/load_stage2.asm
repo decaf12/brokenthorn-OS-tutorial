@@ -1,20 +1,18 @@
 load_stage2_loop:
     mov ax, word [cluster]
-    pop bx
     call ClusterLBA
 
     xor cx, cx
     mov cl, byte [bpbSectorsPerCluster]
     call ReadSectors
 
-    push bx
-    
     mov ax, word [cluster]
     mov cx, ax
     mov dx, ax
     shr dx, 1
     add cx, dx
-    add bx, cx
+
+    mov bx, cx
     add bx, 0x0200
 
     mov dx, word [bx]

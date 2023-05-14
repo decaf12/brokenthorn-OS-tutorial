@@ -1,7 +1,7 @@
 LOAD_FAT:
     mov si, blankLine
     call print_string
-    
+
     mov dx, word [di + 26]
     mov word [cluster], dx
 
@@ -17,8 +17,7 @@ LOAD_FAT:
 
     mov si, blankLine
     call print_string
-        
+
     mov ax, 0x0050
     mov es, ax
     xor bx, bx
-    push bx
